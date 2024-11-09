@@ -1,5 +1,6 @@
 "use server"
 
+import { waitFor } from "@/lib/helper/waitFor"
 import prisma from "@/lib/prisma"
 import { WorkflowStatus } from "@/types/workflow"
 import { auth } from "@clerk/nextjs/server"
@@ -11,6 +12,7 @@ export async function UpdateWorkflow({
     id: string,
     definition: string
 }) {
+    await waitFor(3000)
     const {userId} = auth()
     if(!userId) {
         throw new Error("unauthenticated")

@@ -4,6 +4,7 @@ import { waitFor } from "@/lib/helper/waitFor"
 import prisma from "@/lib/prisma"
 import { WorkflowStatus } from "@/types/workflow"
 import { auth } from "@clerk/nextjs/server"
+import { revalidatePath } from "next/cache"
 
 export async function UpdateWorkflow({
     id,
@@ -38,4 +39,6 @@ if(workflow.status !== WorkflowStatus.DRAFT) throw new Error("workflow is not a 
             userId
         }
     })
+
+    revalidatePath("/workflows")
 }

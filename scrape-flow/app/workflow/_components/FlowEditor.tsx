@@ -71,7 +71,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
 
     const newNode = CreateFlowNode(taskType as TaskType, position);
     setNodes((nds) => nds.concat(newNode));
-  }, []);
+  }, [screenToFlowPosition,setNodes]);
 
   const onConnect = useCallback((connection: Connection) => {
     setEdges((eds) => addEdge({ ...connection, animated: true }, eds));
@@ -86,7 +86,18 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
     const nodeInputs = node.data.inputs;
    delete nodeInputs[connection.targetHandle];
     updateNodeData(node.id, { inputs: nodeInputs });
-  }, [setEdges, updateNodeData]);
+  }, [setEdges, updateNodeData, nodes]);
+
+
+
+  const isValidConnection = useCallback((connection: Edge | Connection)=>{
+    // No self connection allowed 
+if(connection.source == connection.target) {
+  return false
+}
+
+    return true
+  },[] )
   return (
     <main className="h-full w-full">
       <ReactFlow
@@ -103,6 +114,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         onDragOver={onDragOver}
         onDrop={onDrop}
         onConnect={onConnect}
+        isValidConnection={isValidConnection}
       >
         <Controls position="top-left" fitViewOptions={fitViewOptions} />
 

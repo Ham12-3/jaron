@@ -6,6 +6,7 @@ import React, { useCallback } from "react";
 import StringParam from "./param/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
+import BrowserInstanceParam from "./param/BrowserInstanceParam";
 
 function NodeParamField({ param, nodeId }: { param: TaskParam; nodeId: string }) {
 
@@ -32,6 +33,16 @@ updateNodeData(nodeId, {
           <p className="text-xs text-muted-foreground">Not implemented</p>
         </div>
       );
+      case TaskParamType.BROWSER_INSTANCE:
+        return (
+          <BrowserInstanceParam
+          param={param}
+          value={""}
+        
+          updateNodeParamValue={updateNodeParamValue}
+          />
+        )
+
   }
 }
 

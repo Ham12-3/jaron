@@ -99,8 +99,14 @@ export function FlowToExecutionPlan(
   }
 
 
+if(inputsWithErrors.length > 0) {
+    return {
+        error: {
+            type: FlowToExecutionPlanValidationError.INVALID_INPUTS
+        }
+    }
+}
 
-  
   return { executionPlan };
 }
 

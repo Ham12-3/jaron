@@ -35,6 +35,8 @@ model WorkflowExecution {
   starteddAt  DateTime?
   completedAt DateTime?
 
+  phases ExecutionPhase[]
+
   workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 }
 
@@ -50,5 +52,9 @@ model ExecutionPhase {
   inputs String?
   outputs String?
 
+
   creditsCost Int?
+
+  workflowExecutionId String
+  execution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
 }

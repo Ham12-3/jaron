@@ -32,7 +32,7 @@ model WorkflowExecution {
   trigger     String
   status      String
   createdAt   DateTime  @default(now())
-  starteddAt  DateTime?
+  startedAt  DateTime?
   completedAt DateTime?
 
   phases ExecutionPhase[]

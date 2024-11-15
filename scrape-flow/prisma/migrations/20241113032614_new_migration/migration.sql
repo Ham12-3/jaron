@@ -13,7 +13,7 @@ CREATE TABLE "WorkflowExecution" (
     "trigger" TEXT NOT NULL,
     "status" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "starteddAt" DATETIME,
+    "startedAt" DATETIME,
     "completedAt" DATETIME,
     CONSTRAINT "WorkflowExecution_workflowId_fkey" FOREIGN KEY ("workflowId") REFERENCES "Workflow" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );

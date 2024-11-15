@@ -55,30 +55,43 @@ export async function RunWorkflow(form: {
 
   const execution = await prisma.workflowExecution.create({
     data: {
-      workflowId,
-      userId,
-      status: WorkflowExecutionStatus.PENDING,
-      starteddAt: new Date(),
-      trigger: WorkflowExecutionTrigger.MANUAL,
+      workflowId, // String, must match what your schema expects
+      userId, // String, user ID associated with the workflow execution
+      status: WorkflowExecutionStatus.PENDING, // Enum value for status
+      startedAt: new Date(), // Date object, setting the started time
+      trigger: WorkflowExecutionTrigger.MANUAL, // Enum value for trigger
       phases: {
         create: executionPlan.flatMap((phase) => {
           return phase.nodes.flatMap((node) => {
             return {
-              userId,
-              status: ExecutionPhaseStatus.CREATED,
-              number: phase.phase,
-              node: JSON.stringify(node),
-              name: TaskRegistry[node.data.type].label,
+              userId, // String, must match what your schema expects
+              status: ExecutionPhaseStatus.CREATED, // Enum value for phase status
+              number: phase.phase, // Number, representing the phase order
+              node: JSON.stringify(node), // JSON serialized string of the node
+              name: TaskRegistry[node.data.type].label, // Name label derived from the registry
             };
           });
         }),
       },
     },
-    select : {
-        id: true,
-        phases: true
-    }
+    select: {
+      id: true,
+      workflowId: true, // Include workflowId as specified in the `findMany` query
+      userId: true, // Include userId
+      trigger: true, // Include trigger
+      status: true, // Include status
+      createdAt: true, // Include createdAt
+      startedAt: true, // Include startedAt
+      completedAt: true, // Include completedAt
+      phases: {
+        select: {
+          id: true, // Selecting only the ID field of phases
+        },
+      },
+      workflow: true, // Include the workflow relation (if your schema supports it)
+    },
   });
+  
 
   if(!execution) {
     throw new Error("Workflow execution not created")

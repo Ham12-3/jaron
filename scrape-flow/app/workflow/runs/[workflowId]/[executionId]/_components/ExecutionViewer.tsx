@@ -1,8 +1,10 @@
 "use client";
 
 import { GetWorkflowExecutionWithPhases } from "@/actions/workflows/getWorkflowExecutionWIthPhases";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { DatesToDurationString } from "@/lib/helper/dates";
 import { WorkflowExecutionStatus } from "@/types/workflow";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -11,6 +13,7 @@ import {
   CircleDashedIcon,
   ClockIcon,
   CoinsIcon,
+  Loader2Icon,
   LucideIcon,
   WorkflowIcon,
 } from "lucide-react";
@@ -26,6 +29,12 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
+
+const duration = DatesToDurationString(query.data?.completedAt, query.data?.startedAt)
+
+
+const creditComsumed = GetPhasesTotalCost(query.data?.phases || [])
+
   return (
     <div className="flex w-full h-full">
       <aside
@@ -51,7 +60,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
             </span>
           />
 
-          <ExecutionLabel icon={ClockIcon} label="Duration" value={"TODO"} />
+          <ExecutionLabel icon={ClockIcon} label="Duration" value={duration ? duration : <Loader2Icon className="animate-spin" size={20}  /> } />
           <ExecutionLabel icon={CoinsIcon} label="Credit consumed" value={"TODO"} />
           {/* Started at label  */}
         </div>
@@ -65,10 +74,19 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
 <Separator />
 <div className="overflow-auto h-full py-4">
   {query.data?.phases.map((phase, index) => (
-    <Button key={index}>
+    <Button key={phase.id} className="w-full justify-between" variant={"ghost"}>
+      <div className="flex items-center gap-2">
+
+        <Badge variant={"outline"} >
+          {index + 1}
+
+
+        </Badge>
       <p className="font-semibold">
         {phase.name}
       </p>
+      </div>
+     
     </Button>
   ))}
 </div>

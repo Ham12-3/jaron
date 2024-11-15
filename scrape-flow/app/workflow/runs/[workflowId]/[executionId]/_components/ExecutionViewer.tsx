@@ -1,11 +1,20 @@
 "use client";
 
 import { GetWorkflowExecutionWithPhases } from "@/actions/workflows/getWorkflowExecutionWIthPhases";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { WorkflowExecutionStatus } from "@/types/workflow";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import { CalendarIcon, CircleDashedIcon } from "lucide-react";
-import React from "react";
+import {
+  CalendarIcon,
+  CircleDashedIcon,
+  ClockIcon,
+  CoinsIcon,
+  LucideIcon,
+  WorkflowIcon,
+} from "lucide-react";
+import React, { ReactNode } from "react";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
 
@@ -24,37 +33,72 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
         "
       >
         <div className="py-4 px-2">
-          <div className="flex justify-between items-center py-2 px-4 text-sm ">
-            <div className="text-muted-foreground flex items-center gap-2">
-              <CircleDashedIcon
-                size={20}
-                className="stroke-muted-foreground/80"
-              />
+          {/* Sttaus label  */}
+          <ExecutionLabel
+            icon={CircleDashedIcon}
+            label="Status"
+            value={query.data?.status}
+          />
+          <ExecutionLabel
+            icon={CalendarIcon}
+            label="Strted At"
+            value=<span className="lolwercase">
+              {query.data?.startedAt
+                ? formatDistanceToNow(new Date(query.data?.startedAt), {
+                    addSuffix: true,
+                  })
+                : "-"}
+            </span>
+          />
 
-              <span>Status</span>
-            </div>
-            <div className="font-semibold capitalize flex gap-2 items-center">
-              {query.data?.status}
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center py-2 px-4 text-sm">
-            <div className="text-muted-foreground flex items-center gap-2">
-              <CalendarIcon size={20} className="stroke-muted-foreground/80" />
-              <span>Started at </span>
-            </div>
-            <div className="font-semibold capitalize flex gap-2 items-center">
-              {query.data?.startedAt ? formatDistanceToNow(new Date(query.data?.startedAt), {
-                addSuffix: true,
-              
-              }): "-" }
-            </div>
-
-          </div>
+          <ExecutionLabel icon={ClockIcon} label="Duration" value={"TODO"} />
+          <ExecutionLabel icon={CoinsIcon} label="Credit consumed" value={"TODO"} />
+          {/* Started at label  */}
         </div>
+        <Separator />
+<div className="flex justify-center items-center py-2 px-4">
+  <div className="text-muted-foreground flex items-center gap-2">
+    <WorkflowIcon size={20} className="stroke-muted-foreground/80"/>
+    <span className="font-semibold ">Phases</span>
+  </div>
+</div>
+<Separator />
+<div className="overflow-auto h-full py-4">
+  {query.data?.phases.map((phase, index) => (
+    <Button key={index}>
+      <p className="font-semibold">
+        {phase.name}
+      </p>
+    </Button>
+  ))}
+</div>
       </aside>
     </div>
   );
 }
 
 export default ExecutionViewer;
+
+function ExecutionLabel({
+  icon,
+  label,
+  value,
+}: {
+  icon: LucideIcon;
+  label: ReactNode;
+  value: ReactNode;
+}) {
+  const Icon = icon;
+  return (
+    <div className="flex justify-between items-center py-2 px-4 text-sm ">
+      <div className="text-muted-foreground flex items-center gap-2">
+        <Icon size={20} className="stroke-muted-foreground/80" />
+
+        <span>{label}</span>
+      </div>
+      <div className="font-semibold capitalize flex gap-2 items-center">
+        {value}
+      </div>
+    </div>
+  );
+}

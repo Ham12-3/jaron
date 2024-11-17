@@ -13,13 +13,13 @@ export const PagetoHtmlTask = {
   credits: 2,
   inputs: [
     {
-      name: "Webpage",
+      name: "Web page",
       type: TaskParamType.BROWSER_INSTANCE,
       
       required: true,
 
     },
-  ],
+  ] as const,
   outputs: [
     {
         name: "Html",
@@ -30,5 +30,5 @@ export const PagetoHtmlTask = {
         type: TaskParamType.BROWSER_INSTANCE
     }
 
-  ]
+  ] as const
 } satisfies WorkflowTask

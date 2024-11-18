@@ -1,6 +1,7 @@
 import { ExecutionEnvironment } from "@/types/executor";
 import { ExtractTextFromElementTask } from "../task/ExtractTextFromElement";
 
+import * as cheerio from "cheerio"
 
 
 export async function ExtractTextFromElementExecutor(environment:ExecutionEnvironment<typeof ExtractTextFromElementTask>): Promise<boolean> {
@@ -16,6 +17,22 @@ export async function ExtractTextFromElementExecutor(environment:ExecutionEnviro
       if(!html) {
         return false
       }
+
+      const $ = cheerio.load(html)
+      const element = $(selector)
+
+      if(!element) {
+        console.error("element not found")
+        return false
+      }
+
+      const extractedText = $.text(element)
+      if(!extractedText) {
+        console.error("Element has no text")
+        return false
+      }
+
+      environment.setOutput("Extracted text", extractedText)
   
       return true
     } catch (error) {

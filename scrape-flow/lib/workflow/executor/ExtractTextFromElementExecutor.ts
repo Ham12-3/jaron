@@ -9,7 +9,7 @@ export async function ExtractTextFromElementExecutor(environment:ExecutionEnviro
   const selector = environment.getInput("Selector")
 
       if(!selector) {
-        console.error("Selector not defined")
+        environment.log.error("Selector is not provided")
         return false
       }
 

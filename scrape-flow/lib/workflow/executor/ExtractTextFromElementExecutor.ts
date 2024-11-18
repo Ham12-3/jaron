@@ -9,12 +9,14 @@ export async function ExtractTextFromElementExecutor(environment:ExecutionEnviro
   const selector = environment.getInput("Selector")
 
       if(!selector) {
+        console.error("Selector not defined")
         return false
       }
 
       const html = environment.getInput("Html")
 
       if(!html) {
+        console.error("Html not defined")
         return false
       }
 

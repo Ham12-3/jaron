@@ -61,6 +61,7 @@ export async function RunWorkflow(form: {
       status: WorkflowExecutionStatus.PENDING, // Enum value for status
       startedAt: new Date(), // Date object, setting the started time
       trigger: WorkflowExecutionTrigger.MANUAL, // Enum value for trigger
+      definition: flowDefinition,
       phases: {
         create: executionPlan.flatMap((phase) => {
           return phase.nodes.flatMap((node) => {

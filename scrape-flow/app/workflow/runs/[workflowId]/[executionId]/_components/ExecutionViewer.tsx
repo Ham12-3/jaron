@@ -21,6 +21,14 @@ import {
 } from "lucide-react";
 import React, { ReactNode, useState } from "react";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
 
 function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
@@ -159,10 +167,16 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                   {DatesToDurationString(
                     phaseDetails.data.completedAt,
                     phaseDetails.data.startedAt
-                  )}
+                  ) || "-"}
                 </span>
               </Badge>
             </div>
+
+            <ParameterViewer
+              title="Inputs"
+              subTitle="Inputs used for this phase"
+              paramsJson={phaseDetails.data.inputs}
+            />
           </div>
         )}
       </div>
@@ -193,5 +207,22 @@ function ExecutionLabel({
         {value}
       </div>
     </div>
+  );
+}
+
+function ParameterViewer({
+  title,
+  subTitle,
+  paramsJson,
+}: {
+  title: string;
+  subTitle: string;
+  paramsJson: string | null;
+}) {
+  const params = paramsJson ? JSON.parse(paramsJson) : undefined;
+  return (
+    <Card>
+      <CardHeader className="rounded-lg rounded-b-none border-b py-4 bg-gray-50 dark:bg-background"></CardHeader>
+    </Card>
   );
 }

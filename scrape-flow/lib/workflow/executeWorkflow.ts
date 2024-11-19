@@ -15,6 +15,7 @@ import { TaskParamType } from "@/types/task";
 import { Browser, Page } from "puppeteer";
 import { Edge } from "@xyflow/react";
 import { LogCollector } from "@/types/log";
+import { createLogCollector } from "../log";
 
 export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -212,7 +213,7 @@ async function executePhase(
   }
 
   const executionEnvironment: ExecutionEnvironment<any> =
-    createExecutionEnvironment(node, environment);
+    createExecutionEnvironment(node, environment,logCollector);
   return await runFn(executionEnvironment);
 }
 

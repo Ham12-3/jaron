@@ -3,7 +3,7 @@
 <p>Scrape flow is a web application used for web scraping the contents of an application in a way whereby we can extract content of a webpage such as the html elements, the selector and so on </p>
 
 
-<h3>The Hoem Page</h3>
+<h3>The Home Page</h3>
 <hr>
 
 ![alt text](image.png)

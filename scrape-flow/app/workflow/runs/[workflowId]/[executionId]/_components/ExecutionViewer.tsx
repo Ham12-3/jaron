@@ -222,7 +222,31 @@ function ParameterViewer({
   const params = paramsJson ? JSON.parse(paramsJson) : undefined;
   return (
     <Card>
-      <CardHeader className="rounded-lg rounded-b-none border-b py-4 bg-gray-50 dark:bg-background"></CardHeader>
+      <CardHeader className="rounded-lg rounded-b-none border-b py-4 bg-gray-50 dark:bg-background">
+
+        <CardTitle className="text-base">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground text-sm">
+
+          {subTitle}
+
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="py-4">
+        <div className="flex flex-col gap-2">
+
+{(!params || Object.keys(params).length ===0) && (
+  <p className="text-sm">
+
+
+  </p>
+) }
+        </div>
+
+
+      </CardContent>
     </Card>
   );
 }

@@ -9,7 +9,7 @@ export async function LauchBrowserExecutor(environment:ExecutionEnvironment<type
     const websiteUrl = environment.getInput("Website Url")
     
     const browser = await puppeteeer.launch({
-      headless: false,
+      headless: true,
     });
 environment.setBrowser(browser)
     const page = await browser.newPage()

@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { DatesToDurationString } from "@/lib/helper/dates";
 import { GetPhasesTotalCost } from "@/lib/helper/phases";
-import { ExecutionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
+import {
+  ExecutionPhaseStatus,
+  WorkflowExecutionStatus,
+} from "@/types/workflow";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -19,7 +22,7 @@ import {
   LucideIcon,
   WorkflowIcon,
 } from "lucide-react";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
 import {
   Card,
@@ -61,6 +64,27 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
     queryFn: () => GetWorkflowPhaseDetails(selectedPhase!),
   });
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
+
+  useEffect(() => {
+    // While running we auto-select the current running phase in the sidebar
+    const phases = query.data?.phases || [];
+
+    if (isRunning) {
+      // Select the last execution phase
+      const phasesToSelect = phases.toSorted((a, b) =>
+        a.startedAt! > b.startedAt! ? -1 : 1
+      )[0];
+      setSelectedPhase(phasesToSelect.id);
+
+      return;
+    }
+
+    const phasesToSelect = phases.toSorted((a, b) =>
+      a.completedAt! > b.completedAt! ? -1 : 1
+    )[0];
+
+    setSelectedPhase(phasesToSelect.id);
+  }, [query.data?.phases, isRunning, setSelectedPhase]);
 
   const duration = DatesToDurationString(
     query.data?.completedAt,
@@ -135,7 +159,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                 <Badge variant={"outline"}>{index + 1}</Badge>
                 <p className="font-semibold">{phase.name}</p>
               </div>
-             <PhaseStatusBadge status={phase.status as ExecutionPhaseStatus} />
+              <PhaseStatusBadge status={phase.status as ExecutionPhaseStatus} />
             </Button>
           ))}
         </div>
@@ -301,15 +325,28 @@ function LogViewer({ logs }: { logs: ExecutionLog[] | undefined }) {
           <TableBody>
             {logs.map((log) => (
               <TableRow key={log.id} className="text-muted-foreground">
-                <TableCell width={190} className="text-xs text-muted-foreground p-[2px] pl-4">{log.timestamp.toISOString()}</TableCell>
+                <TableCell
+                  width={190}
+                  className="text-xs text-muted-foreground p-[2px] pl-4"
+                >
+                  {log.timestamp.toISOString()}
+                </TableCell>
 
-                <TableCell width={80} className={cn("uppercase text-xs font-bold p-[3px] pl-4",
-                  (log.logLevel as LogLevel) === "error" && "text-destructive",
-                  (log.logLevel as LogLevel) === "info" && "text-primary"
+                <TableCell
+                  width={80}
+                  className={cn(
+                    "uppercase text-xs font-bold p-[3px] pl-4",
+                    (log.logLevel as LogLevel) === "error" &&
+                      "text-destructive",
+                    (log.logLevel as LogLevel) === "info" && "text-primary"
+                  )}
+                >
+                  {log.logLevel}
+                </TableCell>
 
-                )}>{log.logLevel}</TableCell>
-
-                <TableCell className="text-sm flex-1 p-[3px] pl-4">{log.message}</TableCell>
+                <TableCell className="text-sm flex-1 p-[3px] pl-4">
+                  {log.message}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

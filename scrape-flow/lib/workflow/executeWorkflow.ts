@@ -223,6 +223,8 @@ async function executePhase(
     return false;
   }
 
+  
+
   const executionEnvironment: ExecutionEnvironment<any> =
     createExecutionEnvironment(node, environment,logCollector);
   return await runFn(executionEnvironment);

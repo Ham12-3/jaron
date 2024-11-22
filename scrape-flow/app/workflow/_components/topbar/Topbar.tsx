@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import SaveBtn from "./SaveBtn";
 import ExecuteBtn from "./ExecuteBtn";
+import NavigationTabs from "./NavigationTabs";
 
 interface Props {
   title: string;
@@ -15,7 +16,7 @@ interface Props {
   hideButtons?: boolean;
 }
 
-function Topbar({ title, subTitle, workflowId, hideButtons= false }: Props) {
+function Topbar({ title, subTitle, workflowId, hideButtons = false }: Props) {
   const router = useRouter();
   return (
     <header className="flex p-2 border-b-2 border-separate justify-between w-full h-[60px] sticky top-0 bg-background z-10">
@@ -35,16 +36,14 @@ function Topbar({ title, subTitle, workflowId, hideButtons= false }: Props) {
           )}
         </div>
       </div>
-
+<NavigationTabs workflowId={workflowId} />
       <div className="flex gap-1 flex-1 justify-end">
-{hideButtons === false && (
- <>
- <ExecuteBtn workflowId ={workflowId} />
- <SaveBtn workflowId={workflowId} />
- </>
-)}
-       
-
+        {hideButtons === false && (
+          <div>
+            <ExecuteBtn workflowId={workflowId} />
+            <SaveBtn workflowId={workflowId} />
+          </div>
+        )}
       </div>
     </header>
   );

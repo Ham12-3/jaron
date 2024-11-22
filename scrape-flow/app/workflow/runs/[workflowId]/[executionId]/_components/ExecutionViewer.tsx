@@ -45,6 +45,7 @@ import {
 import { cn } from "@/lib/utils";
 import { LogLevel } from "@/types/log";
 import PhaseStatusBadge from "./PhaseStatusBadge";
+import ReactCountUpWrapper from "@/components/ReactCountUpWrapper";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkflowExecutionWithPhases>>;
 
@@ -132,7 +133,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
           <ExecutionLabel
             icon={CoinsIcon}
             label="Credit consumed"
-            value={creditsConsumed}
+            value={<ReactCountUpWrapper value={creditsConsumed} />}
           />
           {/* Started at label  */}
         </div>
@@ -191,7 +192,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                   <span>Credits</span>
                 </div>
 
-                <span>TODO</span>
+                <span>{phaseDetails.data.creditsConsumed}</span>
               </Badge>
 
               <Badge variant={"outline"} className="space-x-4">

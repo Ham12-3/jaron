@@ -27,8 +27,7 @@ export async function ExecuteWorkflow(executionId: string) {
     throw new Error("execution not found");
   }
 
-
-  const edges = JSON.parse(execution.definition).edges as Edge[]
+  const edges = JSON.parse(execution.definition).edges as Edge[];
 
   // TODO: setup execution environment
 
@@ -41,14 +40,16 @@ export async function ExecuteWorkflow(executionId: string) {
 
   // TODO: initialize phases status
 
-  
-
   let creditsConsumed = 0;
 
   let executionFailed = false;
 
   for (const phase of execution.phases) {
-    const phaseExecution = await executeWorkflowPhase(phase, environment,edges);
+    const phaseExecution = await executeWorkflowPhase(
+      phase,
+      environment,
+      edges
+    );
     if (!phaseExecution.success) {
       executionFailed = true;
       break;
@@ -148,12 +149,11 @@ async function executeWorkflowPhase(
   environment: Environment,
   edges: Edge[]
 ) {
-
-    const logCollector = createLogCollector()
+  const logCollector = createLogCollector();
   const startedAt = new Date();
   const node = JSON.parse(phase.node) as AppNode;
 
-  setupEnvironmentForPhase(node, environment,edges);
+  setupEnvironmentForPhase(node, environment, edges);
 
   // Update phase status
 
@@ -168,24 +168,25 @@ async function executeWorkflowPhase(
 
   const creditsRequired = TaskRegistry[node.data.type].credits;
 
-  console.log(`Executing phase ${phase.name} with ${creditsRequired} credits`);
-
   // TODO: decrement user balance (with required credits )
 
   // Execute phase simulation
 
   const success = await executePhase(phase, node, environment, logCollector);
 
-  const outputs = environment.phases[node.id].outputs
+  const outputs = environment.phases[node.id].outputs;
 
-  await finalizePhase(phase.id, success, outputs,logCollector);
-
-
+  await finalizePhase(phase.id, success, outputs, logCollector);
 
   return { success };
 }
 
-async function finalizePhase(phaseId: string, success: boolean, outputs:any, logCollector:LogCollector) {
+async function finalizePhase(
+  phaseId: string,
+  success: boolean,
+  outputs: any,
+  logCollector: LogCollector
+) {
   const finalStatus = success
     ? ExecutionPhaseStatus.COMPLETED
     : ExecutionPhaseStatus.FAILED;
@@ -200,14 +201,13 @@ async function finalizePhase(phaseId: string, success: boolean, outputs:any, log
       outputs: JSON.stringify(outputs),
       logs: {
         createMany: {
-            data: logCollector.getAll().map(log=> ({
-                message:log.message,
-                timestamp:log.timestamp,
-                logLevel:log.level
-            }))
-        }
-
-      }
+          data: logCollector.getAll().map((log) => ({
+            message: log.message,
+            timestamp: log.timestamp,
+            logLevel: log.level,
+          })),
+        },
+      },
     },
   });
 }
@@ -223,14 +223,16 @@ async function executePhase(
     return false;
   }
 
-  
-
   const executionEnvironment: ExecutionEnvironment<any> =
-    createExecutionEnvironment(node, environment,logCollector);
+    createExecutionEnvironment(node, environment, logCollector);
   return await runFn(executionEnvironment);
 }
 
-function setupEnvironmentForPhase(node: AppNode, environment: Environment, edges: Edge[]) {
+function setupEnvironmentForPhase(
+  node: AppNode,
+  environment: Environment,
+  edges: Edge[]
+) {
   environment.phases[node.id] = { inputs: {}, outputs: {} };
 
   const inputs = TaskRegistry[node.data.type].inputs;
@@ -243,18 +245,21 @@ function setupEnvironmentForPhase(node: AppNode, environment: Environment, edges
     }
 
     // Get input value from outputs the environment
-    const connectedEdge = edges.find(edge=> edge.target === node.id && edge.targetHandle === input.name)
+    const connectedEdge = edges.find(
+      (edge) => edge.target === node.id && edge.targetHandle === input.name
+    );
 
-    if(!connectedEdge) {
-        console.error("Missing edge for input", input.name,"node.id:", node.id)
-        continue
+    if (!connectedEdge) {
+      console.error("Missing edge for input", input.name, "node.id:", node.id);
+      continue;
     }
 
+    const outputValue =
+      environment.phases[connectedEdge.source].outputs[
+        connectedEdge.sourceHandle!
+      ];
 
-    const outputValue = environment.phases[connectedEdge.source].outputs[connectedEdge.sourceHandle!]
-
-
-    environment.phases[node.id].inputs[input.name] = outputValue
+    environment.phases[node.id].inputs[input.name] = outputValue;
   }
 }
 
@@ -266,7 +271,7 @@ function createExecutionEnvironment(
   return {
     getInput: (name: string) => environment.phases[node.id]?.inputs[name],
     setOutput: (name: string, value: string) => {
-      environment.phases[node.id].outputs[name] = value
+      environment.phases[node.id].outputs[name] = value;
     },
     getBrowser: () => environment.browser,
     setBrowser: (browser: Browser) => (environment.browser = browser),
@@ -281,5 +286,21 @@ async function cleanupEnvironment(environment: Environment) {
     await environment.browser
       .close()
       .catch((err) => console.error("cannot close browser, reason", err));
+  }
+}
+
+async function decrementCredits(userId: string, amount: number, logCollector:LogCollector ) {
+  try {
+    await prisma.userBalance.update({
+      where: { userId, credits: { gte: amount } },
+      data: { credits: { decrement: amount } },
+    });
+
+    return true;
+  } catch (error) {
+    console.error(error)
+
+ logCollector.error("insufficient balance")
+    return false;
   }
 }

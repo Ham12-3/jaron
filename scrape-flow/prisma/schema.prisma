@@ -13,6 +13,8 @@ model Workflow {
   name              String
   description       String?
   definition        String
+  executionPlan     String?
+  creditsCost       Int                 @default(0)
   status            String
   lastRunAt         DateTime?
   lastRunId         String?
@@ -34,7 +36,7 @@ model WorkflowExecution {
   startedAt   DateTime?
   completedAt DateTime?
 
-  definition String    @default("{}")
+  definition String @default("{}")
 
   creditsConsumed Int              @default(0)
   phases          ExecutionPhase[]
@@ -49,7 +51,7 @@ model ExecutionPhase {
   node                String
   name                String
   startedAt           DateTime?
-  completedAt        DateTime?
+  completedAt         DateTime?
   inputs              String?
   outputs             String?
   creditsConsumed     Int?
@@ -59,22 +61,17 @@ model ExecutionPhase {
   logs ExecutionLog[]
 }
 
-
-
 model ExecutionLog {
-  id String @id @default(cuid())
-  logLevel String
-  message String
+  id        String   @id @default(cuid())
+  logLevel  String
+  message   String
   timestamp DateTime @default(now())
 
   executionPhaseId String
-  executionPhase ExecutionPhase  @relation(fields: [executionPhaseId],references: [id], onDelete: Cascade)
+  executionPhase   ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
 }
 
-
-
 model UserBalance {
-  userId String @id
-  credits Int @default(0)
-
+  userId  String @id
+  credits Int    @default(0)
 }

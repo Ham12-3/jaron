@@ -19,7 +19,7 @@ function ExecuteBtn({ workflowId }: { workflowId: string }) {
     const mutation = useMutation({
       mutationFn: RunWorkflow,
       onSuccess: ()=> {
-        toast.success("Execution started", {id: "floow-execution"})
+        toast.success("Execution started", {id: "flow-execution"})
       },
       onError: ()=> {
 

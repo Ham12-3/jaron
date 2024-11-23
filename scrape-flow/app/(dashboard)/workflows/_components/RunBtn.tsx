@@ -25,6 +25,9 @@ export default function RunBtn({workflowId}: {workflowId: string}) {
     disabled = {mutation.isPending}
     onClick={()=> {
         toast.loading("Scheduling run....", {id:workflowId })
+        mutation.mutate({
+            workflowId,
+        })
     }}
     >
 <PlayIcon size={16}/>        

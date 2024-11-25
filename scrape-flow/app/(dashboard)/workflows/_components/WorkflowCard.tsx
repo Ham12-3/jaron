@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { WorkflowStatus } from "@/types/workflow";
+import { WorkflowExecutionStatus, WorkflowStatus } from "@/types/workflow";
 import { Workflow } from "@prisma/client";
 import {
   CoinsIcon,
@@ -31,7 +31,8 @@ import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 import RunBtn from "./RunBtn";
 import SchedulerDialog from "./SchedulerDialog";
 import { Badge } from "@/components/ui/badge";
-
+import ExecutionStatusIndicator from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
+import { formatDistanceToNow } from "date-fns";
 
 const statusColors = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -71,7 +72,12 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
                 </span>
               )}
             </h3>
-            <ScheduleSection isDraft={isDraft} creditsCost={workflow.creditsCost} workflowId={workflow.id} cron={workflow.cron} />
+            <ScheduleSection
+              isDraft={isDraft}
+              creditsCost={workflow.creditsCost}
+              workflowId={workflow.id}
+              cron={workflow.cron}
+            />
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -89,71 +95,121 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
             <ShuffleIcon size={16} />
             Edit
           </Link>
-          <WorkflowActions workflowName={workflow.name} workflowId={workflow.id} />
+          <WorkflowActions
+            workflowName={workflow.name}
+            workflowId={workflow.id}
+          />
         </div>
       </CardContent>
+      <LastRunDetails workflow={workflow} />
     </Card>
   );
 }
 
-function WorkflowActions({workflowName, workflowId}: {workflowName: string; workflowId: string}) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+function WorkflowActions({
+  workflowName,
+  workflowId,
+}: {
+  workflowName: string;
+  workflowId: string;
+}) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   return (
     <>
-    <DeleteWorkflowDialog open={showDeleteDialog} setOpen={setShowDeleteDialog} workflowName={workflowName} workflowId={workflowId}/>
-     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant={"outline"} size={"sm"}>
-          <TooltipWrapper content={"More actions"}>
-            <div className="flex items-center justify-center w-full h-full ">
-              <MoreVerticalIcon size={18} />
-            </div>
-          </TooltipWrapper>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-   
-      <DropdownMenuSeparator />
+      <DeleteWorkflowDialog
+        open={showDeleteDialog}
+        setOpen={setShowDeleteDialog}
+        workflowName={workflowName}
+        workflowId={workflowId}
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={"outline"} size={"sm"}>
+            <TooltipWrapper content={"More actions"}>
+              <div className="flex items-center justify-center w-full h-full ">
+                <MoreVerticalIcon size={18} />
+              </div>
+            </TooltipWrapper>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-      <DropdownMenuItem className="text-destructive flex items-center gap-2"
-      onSelect={()=> {
-        setShowDeleteDialog((prev)=> !prev)
-      }}
-      >
-        <TrashIcon size={16} />
-        Delete
-      </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            className="text-destructive flex items-center gap-2"
+            onSelect={() => {
+              setShowDeleteDialog((prev) => !prev);
+            }}
+          >
+            <TrashIcon size={16} />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
-   
   );
 }
 
 export default WorkflowCard;
 
-
-function ScheduleSection({isDraft, creditsCost, workflowId,cron}: {isDraft: boolean; creditsCost: number; workflowId:string ; cron: string | null}) {
-  if(isDraft) return null
+function ScheduleSection({
+  isDraft,
+  creditsCost,
+  workflowId,
+  cron,
+}: {
+  isDraft: boolean;
+  creditsCost: number;
+  workflowId: string;
+  cron: string | null;
+}) {
+  if (isDraft) return null;
   return (
     <div className="flex items-center gap-2">
-     <CornerDownRightIcon className="h-4 w-4 text-muted-foreground" />
-     <SchedulerDialog workflowId={workflowId} cron={cron} key={`${cron}-${workflowId}`} />
-     <MoveRightIcon className="h-4 text-muted-foreground"/>
-     <TooltipWrapper content="Credit consumption for full run">
-      <div className="flex items-center gap-3">
-
-<Badge variant={"outline"} className="space-x-2 text-muted-foreground rounded-sm">
-
-<CoinsIcon className="h-4 w-4" />
-<span className="text-sm">
-  {creditsCost}
-
-</span>
-</Badge>
-      </div>
-     </TooltipWrapper>
+      <CornerDownRightIcon className="h-4 w-4 text-muted-foreground" />
+      <SchedulerDialog
+        workflowId={workflowId}
+        cron={cron}
+        key={`${cron}-${workflowId}`}
+      />
+      <MoveRightIcon className="h-4 text-muted-foreground" />
+      <TooltipWrapper content="Credit consumption for full run">
+        <div className="flex items-center gap-3">
+          <Badge
+            variant={"outline"}
+            className="space-x-2 text-muted-foreground rounded-sm"
+          >
+            <CoinsIcon className="h-4 w-4" />
+            <span className="text-sm">{creditsCost}</span>
+          </Badge>
+        </div>
+      </TooltipWrapper>
     </div>
-  )
+  );
+}
+
+
+
+function LastRunDetails({workflow}: {workflow: Workflow}) {
+  const {lastRunAt, lastRunStatus} = workflow
+  const formattedStartedAt = lastRunAt ? formatDistanceToNow(lastRunAt, {addSuffix: true}) : "Never"
+  return <div>
+    <div>
+      {lastRunAt && <Link href={""}>
+      <span>
+        Last run:
+      </span>
+      <ExecutionStatusIndicator status={lastRunStatus as WorkflowExecutionStatus} />
+      </Link>}
+      <span>
+        {lastRunStatus}
+        </span>
+        <span>
+{formattedStartedAt}
+
+        </span>
+    </div>
+  </div>
 }

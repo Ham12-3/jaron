@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { WorkflowExecutionStatus, WorkflowStatus } from "@/types/workflow";
 import { Workflow } from "@prisma/client";
 import {
+  ChevronRightIcon,
+  ClockIcon,
   CoinsIcon,
   CornerDownRightIcon,
   FileTextIcon,
@@ -190,26 +192,40 @@ function ScheduleSection({
   );
 }
 
+function LastRunDetails({ workflow }: { workflow: Workflow }) {
+  const { lastRunAt, lastRunStatus, lastRunId, nextRunAt } = workflow;
+  const formattedStartedAt =
+    lastRunAt && formatDistanceToNow(lastRunAt, { addSuffix: true });
 
-
-function LastRunDetails({workflow}: {workflow: Workflow}) {
-  const {lastRunAt, lastRunStatus} = workflow
-  const formattedStartedAt = lastRunAt ? formatDistanceToNow(lastRunAt, {addSuffix: true}) : "Never"
-  return <div>
-    <div>
-      {lastRunAt && <Link href={""}>
-      <span>
-        Last run:
-      </span>
-      <ExecutionStatusIndicator status={lastRunStatus as WorkflowExecutionStatus} />
-      </Link>}
-      <span>
-        {lastRunStatus}
-        </span>
-        <span>
-{formattedStartedAt}
-
-        </span>
+    const nextSchedule = 
+  return (
+    <div className="bg-primary/5 px-4 py-1 flex justify-between items-center text-muted-foreground">
+      <div className="flex items-center text-sm gap-2">
+        {lastRunAt && (
+          <Link
+            href={`/workflow/runs/${workflow.id}/${lastRunId}`}
+            className="flex items-center text-sm gap-2 group"
+          >
+            <span>Last run:</span>
+            <ExecutionStatusIndicator
+              status={lastRunStatus as WorkflowExecutionStatus}
+            />
+            <span>{lastRunStatus}</span>
+            <span>{formattedStartedAt}</span>
+            <ChevronRightIcon
+              size={14}
+              className="-translate-x-[2px] group-hover:translate-x-0 transition"
+            />
+          </Link>
+        )}
+        {!lastRunAt && <p>No runs yet</p>}
+      </div>
+      {nextRunAt && (
+        <div className="">
+          <ClockIcon />
+          <span>{nextSchedule}</span>
+        </div>
+      )}
     </div>
-  </div>
+  );
 }

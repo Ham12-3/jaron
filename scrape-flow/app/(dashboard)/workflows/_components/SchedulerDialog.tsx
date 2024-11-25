@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CalendarIcon, TriangleAlertIcon } from "lucide-react";
+import { CalendarIcon, ClockIcon, TriangleAlertIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import CustomDialogHeader from "@/components/CustomDialogHeader";
@@ -21,8 +21,8 @@ import { UpdateWorkflowCron } from "@/actions/workflows/updateWorkflowCron";
 import { toast } from "sonner";
 import cronstrue from "cronstrue";
 
-function SchedulerDialog({ workflowId }: { workflowId: string }) {
-  const [cron, setCron] = useState("");
+function SchedulerDialog(props: { cron: string | null; workflowId: string }) {
+  const [cron, setCron] = useState(props.cron || "");
 
   const [validCron, setValidCron] = useState(false);
   const [readableCron, setReadableCron] = useState("");
@@ -55,10 +55,19 @@ function SchedulerDialog({ workflowId }: { workflowId: string }) {
           size={"sm"}
           className={cn("text-sm p-0 h-auto")}
         >
-          <div className="flex items-center gap-1">
-            <TriangleAlertIcon className="h-3 w-3" />
-            Set schedule
-          </div>
+          {validCron && (
+            <div className="flex items-center gap-2">
+              <ClockIcon />
+              {readableCron}
+            </div>
+          )}
+
+          {!validCron && (
+            <div className="flex items-center gap-1">
+              <TriangleAlertIcon className="h-3 w-3" />
+              Set schedule
+            </div>
+          )}
         </Button>
       </DialogTrigger>
 
@@ -77,9 +86,12 @@ function SchedulerDialog({ workflowId }: { workflowId: string }) {
             value={cron}
             onChange={(e) => setCron(e.target.value)}
           />
-          <div className={cn("bg-accent rounded-md p-4 border text-sm border-destructive text-destructive",
-            validCron && "border-primary text-primary"
-          )}>
+          <div
+            className={cn(
+              "bg-accent rounded-md p-4 border text-sm border-destructive text-destructive",
+              validCron && "border-primary text-primary"
+            )}
+          >
             {validCron ? readableCron : "Not a valid cron expression"}
           </div>
         </div>
@@ -96,7 +108,7 @@ function SchedulerDialog({ workflowId }: { workflowId: string }) {
               onClick={() => {
                 toast.loading("Saving...", { id: "cron" });
                 mutation.mutate({
-                  id: workflowId,
+                  id: props.workflowId,
                   cron,
                 });
               }}

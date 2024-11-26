@@ -42,7 +42,7 @@ function Topbar({ title, subTitle, workflowId, hideButtons = false, isPublished=
       <NavigationTabs workflowId={workflowId} />
       <div className="flex gap-1 flex-1 justify-end">
         {hideButtons === false && (
-          <div>
+          <div className="flex gap-3 items-center">
             <ExecuteBtn workflowId={workflowId} />
             {isPublished && <UnpublishBtn workflowId={workflowId} />}
             {!isPublished && (

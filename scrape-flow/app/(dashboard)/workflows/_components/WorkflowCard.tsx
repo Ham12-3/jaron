@@ -33,10 +33,11 @@ import DeleteWorkflowDialog from "./DeleteWorkflowDialog";
 import RunBtn from "./RunBtn";
 import SchedulerDialog from "./SchedulerDialog";
 import { Badge } from "@/components/ui/badge";
-import ExecutionStatusIndicator from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
+import ExecutionStatusIndicator, { ExecutionStatusLabel } from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
 import { format, formatDistanceToNow } from "date-fns";
 
 import {formatInTimeZone} from "date-fns-tz"
+import DuplicateWorkflowDialog from "./DuplicateWorkflowDialog";
 
 const statusColors = {
   [WorkflowStatus.DRAFT]: "bg-yellow-400 text-yellow-600",
@@ -46,7 +47,7 @@ const statusColors = {
 function WorkflowCard({ workflow }: { workflow: Workflow }) {
   const isDraft = workflow.status === WorkflowStatus.DRAFT;
   return (
-    <Card className="border border-separate shadow-sm rounded-lg overflow-hidden hover:shadow-md dark:shadow-primary/30">
+    <Card className="border border-separate shadow-sm rounded-lg overflow-hidden hover:shadow-md dark:shadow-primary/30 group/card">
       <CardContent className="p-4 flex items-center justify-between h-[100px] ">
         <div className="flex items-center justify-end space-x-3">
           <div
@@ -75,6 +76,8 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
                   Draft
                 </span>
               )}
+
+              <DuplicateWorkflowDialog workflowId={workflow.id} />
             </h3>
             <ScheduleSection
               isDraft={isDraft}
@@ -195,6 +198,8 @@ function ScheduleSection({
 }
 
 function LastRunDetails({ workflow }: { workflow: Workflow }) {
+  const isDraft = workflow.status === WorkflowStatus.DRAFT
+  if(isDraft) return null
   const { lastRunAt, lastRunStatus, lastRunId, nextRunAt } = workflow;
   const formattedStartedAt =
     lastRunAt && formatDistanceToNow(lastRunAt, { addSuffix: true });
@@ -214,7 +219,9 @@ function LastRunDetails({ workflow }: { workflow: Workflow }) {
             <ExecutionStatusIndicator
               status={lastRunStatus as WorkflowExecutionStatus}
             />
-            <span>{lastRunStatus}</span>
+              <ExecutionStatusLabel
+              status={lastRunStatus as WorkflowExecutionStatus}
+            />
             <span>{formattedStartedAt}</span>
             <ChevronRightIcon
               size={14}

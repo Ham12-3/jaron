@@ -3,6 +3,7 @@ import { ExtractTextFromElementTask } from "./ExtractTextFromElement";
 import { LaunchBrowserTask } from "./LaunchBrowser";
 import { PagetoHtmlTask } from "./PageToHtml";
 import { WorkflowTask } from "@/types/workflow";
+import { FillInputTask } from "./FillInput";
 
 
 type Registry ={
@@ -13,6 +14,7 @@ export const TaskRegistry: Registry ={
     LAUNCH_BROWSER: LaunchBrowserTask,
     PAGE_TO_HTML: PagetoHtmlTask,
     EXTRACT_TEXT_FROM_ELEMENT: ExtractTextFromElementTask,
+    FILL_INPUT: FillInputTask
 }
 
 

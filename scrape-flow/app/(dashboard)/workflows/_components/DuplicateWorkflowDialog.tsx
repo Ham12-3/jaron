@@ -43,6 +43,7 @@ function DuplicateWorkflowDialog({ workflowId }: { workflowId?: string }) {
       mutationFn: DuplicateWorkflow,
       onSuccess: ()=> {
         toast.success("Workflow duplicated", {id: "duplicate-workflow"})
+        setOpen((prev)=> !prev)
       },
       onError: ()=> {
         toast.error("Failed to duplicate workflow", {id: "duplicate-workflow"})

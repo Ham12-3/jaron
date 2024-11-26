@@ -239,6 +239,7 @@ async function executePhase(
   
   const runFn = ExecutorRegistry[node.data.type];
   if (!runFn) {
+    logCollector.error(`not foun executor for ${node.data.type}`)
     return false;
   }
 

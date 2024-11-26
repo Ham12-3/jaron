@@ -16,6 +16,9 @@ import { Tooltip,
     side?: "top" | "bottom" | "left" | "right";
  }
  function TooltipWrapper(props:Props) {
+    if(!props.content) {
+        return props.children
+    }
  return (
     <TooltipProvider>
 

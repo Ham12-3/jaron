@@ -6,7 +6,7 @@
 <h3>The Home Page</h3>
 <hr>
 
-![alt text](image.png)
+![alt text](scrape-flow/public/image.png)
 
 <hr>
 

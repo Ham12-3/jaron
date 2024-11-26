@@ -15,7 +15,7 @@
 
 <hr>
 
-![alt text](image-1.png)
+![alt text](scrape-flow/public/image-1.png)
 
 <hr>
 
@@ -27,7 +27,7 @@
 
 
 
-![alt text](image-4.png)
+![alt text](scrape-flow/public/image-4.png)
 
 <hr>
 
@@ -36,14 +36,14 @@
 <hr>
 
 
-![alt text](image-3.png)
+![alt text](scrape-flow/public/image-3.png)
 
 <hr>
 
 <h3>The workflow execution</h3>
 <hr>
 
-![alt text](image-5.png)
+![alt text](scrape-flow/public/image-5.png)
 
 <hr>
 <h3>The dark mode</h3>
@@ -51,7 +51,7 @@
 <hr>
 
 
-![alt text](image-6.png)
+![alt text](scrape-flow/public/image-6.png)
 
 <hr>
 

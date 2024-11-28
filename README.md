@@ -1,6 +1,6 @@
 <h1>SCRAPE FLOW</h1>
 
-<p>Scrape flow is a web application used for web scraping the contents of an application in a way whereby you can extract content of a webpage such as the html elements, the selector and so on </p>
+<p>Scrape flow is an AI application that is used to extract large datasets of data from a website </p>
 
 
 <h3>The Home Page</h3>

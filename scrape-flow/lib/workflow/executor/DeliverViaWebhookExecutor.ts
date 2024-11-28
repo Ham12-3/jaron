@@ -30,6 +30,17 @@ const response = await fetch(targetUrl, {
   },
   body: JSON.stringify(body)
 })
+
+const statusCode = response.status
+if(statusCode !==200) {
+  environment.log.error(`status code: ${statusCode}`)
+  return false
+}
+
+
+const responseBody = await response.json()
+environment.log.info(JSON.stringify(responseBody, null, 4))
+
     return true;
   } catch (error: any) {
     environment.log.error(error.message);

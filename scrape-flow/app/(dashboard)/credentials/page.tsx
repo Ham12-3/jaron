@@ -7,6 +7,7 @@ export default function CredentialsPage() {
   return (
     <div className="flex flex-1 flex-col h-full">
       <div>
+        Hello
         <div>
           <h1>Credentials</h1>
           <p>Manage your credentials</p>

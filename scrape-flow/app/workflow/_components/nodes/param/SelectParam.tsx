@@ -20,7 +20,7 @@ type OptionType = {
   value: string;
 }
 
-function SelectParam({ param }: ParamProps) {
+function SelectParam({ param, updateNodeParamValue, value }: ParamProps) {
   const id = useId();
 
   return (
@@ -29,8 +29,8 @@ function SelectParam({ param }: ParamProps) {
         {param.name}
         {param.required && <p className="text-red-400 px-2">*</p>}
       </Label>
-      <Select>
-        <SelectTrigger>
+      <Select onValueChange={value=> updateNodeParamValue(value)} defaultValue={value}>
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
 

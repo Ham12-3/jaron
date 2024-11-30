@@ -11,6 +11,8 @@ import {
 import { TaskType } from "@/types/task";
 import { TaskRegistry } from "@/lib/workflow/task/registry";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { CoinsIcon } from "lucide-react";
 
 function TaskMenu() {
   return (
@@ -29,8 +31,10 @@ function TaskMenu() {
             User interactions
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
+          <TaskMenuBtn taskType={TaskType.NAVIGATE_URL} />
             <TaskMenuBtn taskType={TaskType.FILL_INPUT} />
             <TaskMenuBtn taskType={TaskType.CLICK_ELEMENT} />
+            <TaskMenuBtn taskType={TaskType.SCROLL_TO_ELEMENT} />
           </AccordionContent>
         </AccordionItem>
 
@@ -51,6 +55,7 @@ function TaskMenu() {
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuBtn taskType={TaskType.READ_PROPERTY_FROM_JSON} />
+            <TaskMenuBtn taskType={TaskType.ADD_PROPERTY_TO_JSON} />
           </AccordionContent>
         </AccordionItem>
 
@@ -96,6 +101,10 @@ function TaskMenuBtn({ taskType }: { taskType: TaskType }) {
 
         {task.label}
       </div>
+      <Badge className="gap-2 flex items-center" variant={"outline"}>
+        <CoinsIcon size={16}/>
+        {task.credits}
+      </Badge>
     </Button>
   );
 }

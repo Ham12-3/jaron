@@ -70,10 +70,22 @@ export async function ExtractDataWithAIExecutor(
           content: prompt,
         },
       ],
-      temperature: 1
+      temperature: 1,
+     
     });
 
-    environment.setOutput("Extracted data", JSON.stringify(mockExtractedData));
+    environment.log.info(`Prompt otkens: ${response.usage?.prompt_tokens}`)
+
+    environment.log.info(`Completion tokens: ${response.usage?.completion_tokens}`)
+
+
+    const result = response.choices[0].message?.content
+    if(!result) {
+      environment.log.error("empty response from AI")
+      return false
+    }
+    environment.setOutput("Extracted data", result);
+
 
     return true;
   } catch (error: any) {

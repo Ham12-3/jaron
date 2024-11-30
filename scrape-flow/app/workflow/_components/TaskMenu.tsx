@@ -22,21 +22,17 @@ function TaskMenu() {
       <Accordion
         type="multiple"
         className="w-full "
-        defaultValue={["extraction", "interactions","timing", "results"]}
+        defaultValue={["extraction", "interactions", "timing", "results", "storage"]}
       >
         <AccordionItem value="interactions">
           <AccordionTrigger className="font-bold">
-       User interactions
+            User interactions
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuBtn taskType={TaskType.FILL_INPUT} />
             <TaskMenuBtn taskType={TaskType.CLICK_ELEMENT} />
-           
-            
           </AccordionContent>
         </AccordionItem>
-
-
 
         <AccordionItem value="extraction">
           <AccordionTrigger className="font-bold">
@@ -49,6 +45,14 @@ function TaskMenu() {
           </AccordionContent>
         </AccordionItem>
 
+        <AccordionItem value="storage">
+          <AccordionTrigger className="font-bold">
+            Data Storage
+          </AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-1">
+            <TaskMenuBtn taskType={TaskType.READ_PROPERTY_FROM_JSON} />
+          </AccordionContent>
+        </AccordionItem>
 
         <AccordionItem value="timing">
           <AccordionTrigger className="font-bold">
@@ -56,12 +60,8 @@ function TaskMenu() {
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuBtn taskType={TaskType.WAIT_FOR_ELEMENT} />
-
-            
           </AccordionContent>
         </AccordionItem>
-
-
 
         <AccordionItem value="results">
           <AccordionTrigger className="font-bold">
@@ -69,8 +69,6 @@ function TaskMenu() {
           </AccordionTrigger>
           <AccordionContent className="flex flex-col gap-1">
             <TaskMenuBtn taskType={TaskType.DELIVER_VIA_WEBHOOK} />
-
-            
           </AccordionContent>
         </AccordionItem>
       </Accordion>

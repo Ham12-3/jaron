@@ -6,6 +6,8 @@ import { ExtractDataWithAITask } from "../task/ExtractDataWithAI";
 import prisma from "@/lib/prisma";
 import { symmetricDecrypt } from "@/lib/encryption";
 
+import OpenAI from "openai";
+
 export async function ExtractDataWithAIExecutor(
   environment: ExecutionEnvironment<typeof ExtractDataWithAITask>
 ): Promise<boolean> {
@@ -46,13 +48,30 @@ export async function ExtractDataWithAIExecutor(
       return false;
     }
 
-    const mockExtractedData = {
-      usernameSelector: "#username",
-      passwordSelector: "#password",
-      loginSelector: "body > div > form > button",
-    };
+    const openai = new OpenAI({
+      apiKey: plainCredentialValue,
+    });
 
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a webscraper helper that extracts data from HTML or text. You will be given a piece of text or HTML content as input and also the prompt with the data you want to extract. The  response should always be only the extracted data as a JSON array or object, without any additional words or explanations. Analyse the input carefully and extract data precisely based on the prompt. if no data is found, return an empty JSON array. Work only with the provided content and ensue the output is always a valid JSON aray without any surrounding text",
+        },
+        {
+          role: "user",
+          content: content,
+        },
 
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 1
+    });
 
     environment.setOutput("Extracted data", JSON.stringify(mockExtractedData));
 

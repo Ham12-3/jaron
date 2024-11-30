@@ -2,7 +2,7 @@
 import crypto from "crypto"
 
 import "server-only"
-const ALG= "aes_256-cbc"  //key length is 32 bytes
+const ALG= "aes-256-cbc"  //key length is 32 bytes
 
 
 //openssl rand -hex 32

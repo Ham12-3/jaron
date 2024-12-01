@@ -1,17 +1,51 @@
-import { GetPeriods } from '@/actions/analytics/getPeriods'
-import React from 'react'
+import { GetPeriods } from "@/actions/analytics/getPeriods";
+import React, { Suspense } from "react";
+import PeriodSelector from "./_components/PeriodSelector";
+import { Period } from "@/types/analytics";
+import { Skeleton } from "@/components/ui/skeleton";
+import { GetStatsCardsValues } from "@/actions/analytics/getStatsCardsValues";
 
-type Props = {}
+const HomePage = ({
+  searchParams,
+}: {
+  searchParams: { month?: string; year?: string };
+}) => {
+  const currentDate = new Date();
+  const { month, year } = searchParams;
+  const period: Period = {
+    month: month ? parseInt(month) : currentDate.getMonth(),
+    year: year ? parseInt(year) : currentDate.getFullYear(),
+  };
 
-const HomePage = (props: Props) => {
   return (
-    <div>HomePage</div>
-  )
+    <div className="flex flex-1 flex-col h-full">
+      <div className="flex justify-between">
+        <h1 className="text-3xl font-bold"></h1>
+
+        <Suspense fallback={<Skeleton className="w-[180px] h-[40px]" />}>
+          <PeriodSelectorWrapper selectedPeriod={period} />
+        </Suspense>
+      </div>
+      <StatsCards selectedPeriod={period} />
+    </div>
+  );
+};
+
+async function PeriodSelectorWrapper({
+  selectedPeriod,
+}: {
+  selectedPeriod: Period;
+}) {
+  const periods = await GetPeriods();
+  return <PeriodSelector selectedPeriod={selectedPeriod} periods={periods} />;
 }
 
 
-async function PeriodSelectorWrapper() {
-  const periods= await GetPeriods()
-  return <pre>{JSON.stringify(periods, null,4)}</pre>
+async function StatsCards({selectedPeriod}: {selectedPeriod: Period}) {
+  const data = await GetStatsCardsValues(selectedPeriod)
+
+  return <pre>{JSON.stringify(data, null, 4)}</pre>
 }
-export default HomePage
+
+
+export default HomePage;

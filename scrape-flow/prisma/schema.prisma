@@ -80,17 +80,23 @@ model UserBalance {
   credits Int    @default(0)
 }
 
-
 model Credential {
-  id String @id @default(cuid())
+  id     String @id @default(cuid())
   userId String
-  name String
-  value String
-
-
+  name   String
+  value  String
 
   createdAt DateTime @default(now())
 
   @@unique([userId, name])
+}
 
+model UserPurchase {
+  id          String   @id @default(cuid())
+  userId      String
+  stripeId    String
+  description String
+  amount      Int
+  currency    String
+  date        DateTime @default(now())
 }

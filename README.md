@@ -1,6 +1,14 @@
+
+
+
+
 <h1>SCRAPE FLOW</h1>
 
 <p>Scrape flow is an AI application that is used to extract large datasets of data from a website </p>
+
+
+
+https://github.com/user-attachments/assets/cb6d58a0-7374-4a3c-ba40-60d8df11a9d5
 
 
 <h3>The Home Page</h3>
